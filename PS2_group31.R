@@ -49,5 +49,6 @@ summary(amazon4$price_online)
 
 retailer_prc_avg <- amazon4[, .(retailer_prc_avg = mean(price_online, na.rm = TRUE)), by = retailer_id]
 
+## test comment
 
 
