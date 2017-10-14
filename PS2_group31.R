@@ -1,5 +1,7 @@
 rm(list=ls())
 library(data.table)
+install.packages("GGally")
+library(GGally)
 
 ## 1) Use the amazon_compare.csv file and load it into Stata or R.
 amazon <- read.csv("amazon_compare.csv")
@@ -19,28 +21,32 @@ summary(amazon)
 ## 3) Check the pairwise correlations among the price variables in the dataset. What do expect
 ## from these correlations? Should they be higher or lower than what they actually are?
 
-install.packages("GGally")
-library(GGally)
-
 ## Checking the correlation between price and price_amazon
 priceset <- data.frame(amazon$price, amazon$price_amazon)
-priceset2 <- priceset[which((priceset$amazon.price < 2000) & (priceset$amazon.price_amazon < 2000)),]
-## we droppped observations with prices higher than 2000
-## now comparing price with price_amazon
-summary(priceset2)
-ggpairs(priceset2)
 
-## dropping the 1310 NAs from the data set
+## We could drop the extreme values to see the difference. A possible way to do it is the following:
+boxplot(amazon$price, amazon$price_amazon)
+priceset2 <- priceset[which((priceset$amazon.price < 3000) & (priceset$amazon.price_amazon < 3000)),]
+
+## now comparing price with price_amazon
+summary(priceset)
+ggpairs(priceset, title = "Correlation between price and price_amazon created by ggpairs")
+ggpairs(priceset2, title = "Correlation between price and price_amazon created by ggpairs")
+
+## dropping the 1310 NAs from the original data set
 amazon2 <- amazon[which(!is.na(amazon$price) & !is.na(amazon$price_online)),]
 summary(amazon2) # no we have only 2682 observations
 
 ## Now comparing the three different price variable
-priceset <- data.frame(amazon2$price, amazon2$price_online, amazon2$price_amazon)
-priceset2 <- priceset[which((priceset$amazon2.price < 2000) & (priceset$amazon2.price_amazon < 2000)),]
-## we droppped observations with prices higher than 2000
+priceset3 <- data.frame(amazon2$price, amazon2$price_online, amazon2$price_amazon)
+
 ## let's see the plot of the comparison
-summary(priceset2)
-ggpairs(priceset2)
+summary(priceset3)
+ggpairs(priceset3, title = "Correlation among price, price_online and price_amazon")
+
+priceset4 <- priceset3[which((priceset3$amazon2.price < 3000) & (priceset3$amazon2.price_amazon < 3000)),]
+summary(priceset4)
+ggpairs(priceset4, title = "Correlation among price, price_online and price_amazon")
 
 ## please find our detailed answer in the pdf sheet attached
 
@@ -131,33 +137,65 @@ amazon4[, mean(price_online), by = retailer_id]
 ## 7) Generate a variable that is the difference between price and online price, call this variable
 ## diff_price and drop the observations that are larger than the 95 percentile.
 
+## creating diff_preice
 amazon4$diff_price <- amazon4$price - amazon4$price_online
 summary((amazon4$diff_price))
 
-library(GGally)
-ggpairs(amazon4, columns = 4:6, title = 'with extreme values')
-
-# drop 95th percentile of it
+# dropping the observations that are larger than the 95th percentile
 amazon5 <- amazon4[which(amazon4$diff_price <= quantile(amazon2$price, prob = 0.95))]
 summary((amazon5$diff_price))
-
-ggpairs(amazon5, columns = 4:6, title = 'after dropping 95th percentile')
-
-## please find our detailed answer in the pdf sheet attached
 
 ## ==================================================================================================
 
 ## 8) Check the pairwise correlations among the price variables in the dataset. How do they change
 ## when you drop these extreme values?
 
+ggpairs(amazon4, columns = 4:6, title = 'Correlation with extreme values')
+ggpairs(amazon5, columns = 4:6, title = 'Correlation after dropping extreme values')
+str(amazon4)
+
 ## ==================================================================================================
 
 ## 9) Make summary statistics (mean, standard deviations, quartiles, percentiles) of the diff_price.
+
+## Summary of diff_price before dropping extreme values
+summary(amazon4$diff_price)
+sd(amazon4$diff)
+
+## Summary of diff_price after dropping extreme values
+## a simpler way to do it
+summary(amazon5$diff_price)
+sd(amazon5$diff)
+
+## a more customized way to do it
+data_check_q9<-data.frame(avg=double(),sd=double(),min=double(),q1=double(),q2=double(),q3=double(),max=double())
+data_check_q9[1,1]<-amazon5[,mean(diff_price,na.rm=TRUE)]
+data_check_q9[1,2]<-amazon5[,sd(diff_price,na.rm=TRUE)]
+data_check_q9[1,3]<-amazon5[,quantile(diff_price,c(0),na.rm=TRUE)]
+data_check_q9[1,4]<-amazon5[,quantile(diff_price,c(0.25),na.rm=TRUE)]
+data_check_q9[1,5]<-amazon5[,quantile(diff_price,c(0.5),na.rm=TRUE)]
+data_check_q9[1,6]<-amazon5[,quantile(diff_price,c(0.75),na.rm=TRUE)]
+data_check_q9[1,7]<-amazon5[,quantile(diff_price,c(1),na.rm=TRUE)]
+data_check_q9
 
 ## ==================================================================================================
 
 ## 10) Create a random number generator from a uniform distribution, with parameters of your own
 ## choice setting the seed equal to your group number. Call this variable id_rand.
+
+#If you want to generate a decimal number where any value (including fractional values) between
+## the stated minimum and maximum is equally likely, we need to use the runif function. This
+## function generates values from the Uniform distribution.
+
+set.seed(31)
+## creating a random number generator that generates 3970 rounded numbers between 1 and 3970. The
+## reason for 3970 is that after dropping the extreme values we have 3970 observations.
+round(runif(nrow(amazon5), 1, nrow(amazon5)))
+## If we wanted to generate random numbers without replacement, we need to use the sample function.
+## It generates also 3970 rounded numbers between 1 and 3970, and one number can only occur
+## once among the numbers, let's call it id_rand.
+amazon5$id_rand <- sample(1:nrow(amazon5), nrow(amazon5), replace = F)
+str(amazon5)
 
 ## ==================================================================================================
 
@@ -165,11 +203,47 @@ ggpairs(amazon5, columns = 4:6, title = 'after dropping 95th percentile')
 ## statistics (mean, standard deviations, quartiles, percentiles) of the diff_price.
 ## How do these statistics compare with those in 9?
 
+amazon6 <- amazon5[order(id_rand)]
+
+## a simpler way to do it
+summary(amazon6[1:100,diff_price])
+sd(amazon6[1:100,diff_price])
+
+## a more customized way to do it
+data_check_q11<-data.frame(avg=double(),sd=double(),min=double(),q1=double(),q2=double(),q3=double(),max=double())
+data_check_q11[1,1]<-amazon6[1:100,mean(diff_price,na.rm=TRUE)]
+data_check_q11[1,2]<-amazon6[1:100,sd(diff_price,na.rm=TRUE)]
+data_check_q11[1,3]<-amazon6[1:100,quantile(diff_price,c(0),na.rm=TRUE)]
+data_check_q11[1,4]<-amazon6[1:100,quantile(diff_price,c(0.25),na.rm=TRUE)]
+data_check_q11[1,5]<-amazon6[1:100,quantile(diff_price,c(0.5),na.rm=TRUE)]
+data_check_q11[1,6]<-amazon6[1:100,quantile(diff_price,c(0.75),na.rm=TRUE)]
+data_check_q11[1,7]<-amazon6[1:100,quantile(diff_price,c(1),na.rm=TRUE)]
+data_check_q11
+
+## Please find the values in the pdf attached
+
 ## ==================================================================================================
 
 ## 12) Use the same procedure as in point 10 and select the last 200 observations in your dataset.
 ## Make summary statistics (mean, standard deviations, quartiles, percentiles) of the diff_price.
 ## How do these statistics compare with those in 9 and 11?
+
+## a simpler way to do it
+summary(amazon6[(nrow(amazon6)-199):nrow(amazon6),diff_price])
+sd(amazon6[(nrow(amazon6)-199):nrow(amazon6),diff_price])
+
+## a more customized way to do it
+data_check_q12<-data.frame(avg=double(),sd=double(),min=double(),q1=double(),q2=double(),q3=double(),max=double())
+data_check_q12[1,1]<-amazon6[3771:3970,mean(diff_price,na.rm=TRUE)]
+data_check_q12[1,2]<-amazon6[3771:3970,sd(diff_price,na.rm=TRUE)]
+data_check_q12[1,3]<-amazon6[3771:3970,quantile(diff_price,c(0),na.rm=TRUE)]
+data_check_q12[1,4]<-amazon6[3771:3970,quantile(diff_price,c(0.25),na.rm=TRUE)]
+data_check_q12[1,5]<-amazon6[3771:3970,quantile(diff_price,c(0.5),na.rm=TRUE)]
+data_check_q12[1,6]<-amazon6[3771:3970,quantile(diff_price,c(0.75),na.rm=TRUE)]
+data_check_q12[1,7]<-amazon6[3771:3970,quantile(diff_price,c(1),na.rm=TRUE)]
+data_check_q12
+
+## Please find the values in the pdf attached
 
 ## ==================================================================================================
 
@@ -177,11 +251,43 @@ ggpairs(amazon5, columns = 4:6, title = 'after dropping 95th percentile')
 ## Make summary statistics (mean, standard deviations, quartiles, percentiles) of the variable
 ## diff_price.How do these statistics compare with those in 9, 11, and 12? (Not mandatory!)
 
+summary(amazon6[1:1000,diff_price])
+sd(amazon6[1:1000,diff_price])
+
+## a more customized way to do it
+data_check_q13<-data.frame(avg=double(),sd=double(),min=double(),q1=double(),q2=double(),q3=double(),max=double())
+data_check_q13[1,1]<-amazon6[1:1000,mean(diff_price,na.rm=TRUE)]
+data_check_q13[1,2]<-amazon6[1:1000,sd(diff_price,na.rm=TRUE)]
+data_check_q13[1,3]<-amazon6[1:1000,quantile(diff_price,c(0),na.rm=TRUE)]
+data_check_q13[1,4]<-amazon6[1:1000,quantile(diff_price,c(0.25),na.rm=TRUE)]
+data_check_q13[1,5]<-amazon6[1:1000,quantile(diff_price,c(0.5),na.rm=TRUE)]
+data_check_q13[1,6]<-amazon6[1:1000,quantile(diff_price,c(0.75),na.rm=TRUE)]
+data_check_q13[1,7]<-amazon6[1:1000,quantile(diff_price,c(1),na.rm=TRUE)]
+data_check_q13
+
+## Please find the values in the pdf attached
+
 ## ==================================================================================================
 
 ## 14) Use the same procedure as in point 10 and select the last 1000 observations in your dataset.
 ## Make summary statistics (mean, standard deviations, quartiles, percentiles) of the diff_price.
 ## How do these statistics compare with those in 9, 11, 12, and 13. (Not mandatory!)
+
+summary(amazon6[(nrow(amazon6)-999):nrow(amazon6),diff_price])
+sd(amazon6[(nrow(amazon6)-999):nrow(amazon6),diff_price])
+
+## a more customized way to do it
+data_check_q14<-data.frame(avg=double(),sd=double(),min=double(),q1=double(),q2=double(),q3=double(),max=double())
+data_check_q14[1,1]<-amazon6[2971:3970,mean(diff_price,na.rm=TRUE)]
+data_check_q14[1,2]<-amazon6[2971:3970,sd(diff_price,na.rm=TRUE)]
+data_check_q14[1,3]<-amazon6[2971:3970,quantile(diff_price,c(0),na.rm=TRUE)]
+data_check_q14[1,4]<-amazon6[2971:3970,quantile(diff_price,c(0.25),na.rm=TRUE)]
+data_check_q14[1,5]<-amazon6[2971:3970,quantile(diff_price,c(0.5),na.rm=TRUE)]
+data_check_q14[1,6]<-amazon6[2971:3970,quantile(diff_price,c(0.75),na.rm=TRUE)]
+data_check_q14[1,7]<-amazon6[2971:3970,quantile(diff_price,c(1),na.rm=TRUE)]
+data_check_q14
+
+## Please find the values in the pdf attached
 
 ## ==================================================================================================
 
