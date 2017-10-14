@@ -145,10 +145,19 @@ summary((amazon4$diff_price))
 amazon5 <- amazon4[which(amazon4$diff_price <= quantile(amazon2$price, prob = 0.95))]
 summary((amazon5$diff_price))
 
+<<<<<<< HEAD
+=======
+
+## please find our detailed answer in the pdf sheet attached
+
+>>>>>>> 212e732451a39a352e96feddbddda9da6eb180c2
 ## ==================================================================================================
 
 ## 8) Check the pairwise correlations among the price variables in the dataset. How do they change
 ## when you drop these extreme values?
+ggpairs(amazon5, columns = 4:6, title = 'after dropping 95th percentile')
+
+## please find our detailed answer in the pdf sheet attached
 
 ggpairs(amazon4, columns = 4:6, title = 'Correlation with extreme values')
 ggpairs(amazon5, columns = 4:6, title = 'Correlation after dropping extreme values')
