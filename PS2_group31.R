@@ -307,4 +307,60 @@ data_check_q14
 ## conclusions? Should we keep extreme values or should we drop them from the dataset? (Not
 ## mandatory for part-time students!)
 
+set.seed(31)
+## Generating 3992 rounded numbers between 1 and 3992, and one number can only occur
+## once among the numbers, let's call it also id_rand.
+amazon4$id_rand <- sample(1:nrow(amazon4), nrow(amazon4), replace = F)
+str(amazon4)
+
+amazon7 <- amazon4[order(id_rand)]
+str(amazon7)
+
+## creating statistics
+data_check_q16<-data.frame(avg=double(),sd=double(),min=double(),q1=double(),q2=double(),q3=double(),max=double())
+data_check_q16[1,1]<-amazon7[,mean(diff_price,na.rm=TRUE)]
+data_check_q16[1,2]<-amazon7[,sd(diff_price,na.rm=TRUE)]
+data_check_q16[1,3]<-amazon7[,quantile(diff_price,c(0),na.rm=TRUE)]
+data_check_q16[1,4]<-amazon7[,quantile(diff_price,c(0.25),na.rm=TRUE)]
+data_check_q16[1,5]<-amazon7[,quantile(diff_price,c(0.5),na.rm=TRUE)]
+data_check_q16[1,6]<-amazon7[,quantile(diff_price,c(0.75),na.rm=TRUE)]
+data_check_q16[1,7]<-amazon7[,quantile(diff_price,c(1),na.rm=TRUE)]
+data_check_q16
+
+data_check_q16[2,1]<-amazon7[1:100,mean(diff_price,na.rm=TRUE)]
+data_check_q16[2,2]<-amazon7[1:100,sd(diff_price,na.rm=TRUE)]
+data_check_q16[2,3]<-amazon7[1:100,quantile(diff_price,c(0),na.rm=TRUE)]
+data_check_q16[2,4]<-amazon7[1:100,quantile(diff_price,c(0.25),na.rm=TRUE)]
+data_check_q16[2,5]<-amazon7[1:100,quantile(diff_price,c(0.5),na.rm=TRUE)]
+data_check_q16[2,6]<-amazon7[1:100,quantile(diff_price,c(0.75),na.rm=TRUE)]
+data_check_q16[2,7]<-amazon7[1:100,quantile(diff_price,c(1),na.rm=TRUE)]
+data_check_q16
+
+data_check_q16[3,1]<-amazon7[3793:3992,mean(diff_price,na.rm=TRUE)]
+data_check_q16[3,2]<-amazon7[3793:3992,sd(diff_price,na.rm=TRUE)]
+data_check_q16[3,3]<-amazon7[3793:3992,quantile(diff_price,c(0),na.rm=TRUE)]
+data_check_q16[3,4]<-amazon7[3793:3992,quantile(diff_price,c(0.25),na.rm=TRUE)]
+data_check_q16[3,5]<-amazon7[3793:3992,quantile(diff_price,c(0.5),na.rm=TRUE)]
+data_check_q16[3,6]<-amazon7[3793:3992,quantile(diff_price,c(0.75),na.rm=TRUE)]
+data_check_q16[3,7]<-amazon7[3793:3992,quantile(diff_price,c(1),na.rm=TRUE)]
+data_check_q16
+
+data_check_q16[4,1]<-amazon7[1:1000,mean(diff_price,na.rm=TRUE)]
+data_check_q16[4,2]<-amazon7[1:1000,sd(diff_price,na.rm=TRUE)]
+data_check_q16[4,3]<-amazon7[1:1000,quantile(diff_price,c(0),na.rm=TRUE)]
+data_check_q16[4,4]<-amazon7[1:1000,quantile(diff_price,c(0.25),na.rm=TRUE)]
+data_check_q16[4,5]<-amazon7[1:1000,quantile(diff_price,c(0.5),na.rm=TRUE)]
+data_check_q16[4,6]<-amazon7[1:1000,quantile(diff_price,c(0.75),na.rm=TRUE)]
+data_check_q16[4,7]<-amazon7[1:1000,quantile(diff_price,c(1),na.rm=TRUE)]
+data_check_q16
+
+data_check_q16[5,1]<-amazon7[2993:3992,mean(diff_price,na.rm=TRUE)]
+data_check_q16[5,2]<-amazon7[2993:3992,sd(diff_price,na.rm=TRUE)]
+data_check_q16[5,3]<-amazon7[2993:3992,quantile(diff_price,c(0),na.rm=TRUE)]
+data_check_q16[5,4]<-amazon7[2993:3992,quantile(diff_price,c(0.25),na.rm=TRUE)]
+data_check_q16[5,5]<-amazon7[2993:3992,quantile(diff_price,c(0.5),na.rm=TRUE)]
+data_check_q16[5,6]<-amazon7[2993:3992,quantile(diff_price,c(0.75),na.rm=TRUE)]
+data_check_q16[5,7]<-amazon7[2993:3992,quantile(diff_price,c(1),na.rm=TRUE)]
+data_check_q16
+
 ## ==================================================================================================
