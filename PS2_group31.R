@@ -68,4 +68,12 @@ amazon4$price_online <- amazon4[, ifelse(is.na(price_online),
 summary(amazon4$price_online)
 amazon4[, mean(price_online), by = retailer_id]
 
+#  a variable that is the difference between price and online price
+
+amazon4$diff_price <- amazon4$price - amazon4$price_online
+summary((amazon4$diff_price))
+
+# drop 95th percentile of it
+amazon5 <- amazon4[which(amazon4$diff_price <= quantile(amazon2$price, prob = 0.95))]
+
 
