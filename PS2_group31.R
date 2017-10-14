@@ -43,11 +43,28 @@ table(is.na(amazon4$price_online), amazon4$Amz_pricecat)
 
 mean <- mean(amazon4$price_online, na.rm = TRUE)
 amazon4$price_online[which(is.na(amazon4$price_online))] <- mean
+
 summary(amazon4$price_online)
 
 #replace missing values in price_online with category means like retailer or product
+#first i go one step back and create amazon4 one more time. Because we need the version with NAs:
+amazon4 <- amazon3[, Amz_pricecat := cut(price_amazon, c(0,
+                                                         median,
+                                                         Inf),
+                                         labels = c('low', 'high')),]
 
-retailer_prc_avg <- amazon4[, .(retailer_prc_avg = mean(price_online, na.rm = TRUE)), by = retailer_id]
+#Now we can do the replacement
 
+str(which(is.na(amazon4$price_online)))
+amazon4$price_online[which(is.na(amazon4$price_online))]
 
+amazon4[, sum(is.na(price_online)), by = retailer_id]
+
+amazon4$price_online <- amazon4[, ifelse(is.na(price_online), 
+                 mean(price_online, na.rm = TRUE), 
+                 price_online),
+                 by = retailer_id][,2]
+
+summary(amazon4$price_online)
+amazon4[, mean(price_online), by = retailer_id]
 
