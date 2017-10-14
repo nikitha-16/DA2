@@ -73,7 +73,12 @@ amazon4[, mean(price_online), by = retailer_id]
 amazon4$diff_price <- amazon4$price - amazon4$price_online
 summary((amazon4$diff_price))
 
+library(GGally)
+ggpairs(amazon4, columns = 4:6, title = 'with extreme values')
+
 # drop 95th percentile of it
 amazon5 <- amazon4[which(amazon4$diff_price <= quantile(amazon2$price, prob = 0.95))]
+summary((amazon5$diff_price))
 
+ggpairs(amazon5, columns = 4:6, title = 'after dropping 95th percentile')
 
