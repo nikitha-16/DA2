@@ -73,7 +73,7 @@ amazon[amazon$merchant == "",.N]
 ## to have missing values if the price (or amazon price) is high. Another way to might be to create
 ## a discrete variable taking values 1-4 for each quartile of the price (or amazon price) variable.
 
-## missing values by category like retailer
+## missing values by category and retailer
 amazon3 <- data.table(amazon) 
 table(is.na(amazon3$price_online), amazon3$category)
 table(is.na(amazon3$price_online), amazon3$retailer_id)
@@ -87,7 +87,15 @@ amazon4 <- amazon3[, Amz_pricecat := cut(price_amazon, c(0,
 
 table(is.na(amazon4$price_online), amazon4$Amz_pricecat)
 
-#replace missing values in price_online with its mean
+## please find our detailed answer in the pdf sheet attached
+
+## ==================================================================================================
+
+## 6) Replace missing observations in the online price variable with its mean or mode. Does it
+## make more sense to replace them with the mean/mode or should we replace them by using the
+## mean/mode of online price levels for various retailer type or good category? (Not mandatory!)
+
+## replacing missing values in price_online with its mean
 
 mean <- mean(amazon4$price_online, na.rm = TRUE)
 amazon4$price_online[which(is.na(amazon4$price_online))] <- mean
@@ -116,7 +124,12 @@ amazon4$price_online <- amazon4[, ifelse(is.na(price_online),
 summary(amazon4$price_online)
 amazon4[, mean(price_online), by = retailer_id]
 
-#  a variable that is the difference between price and online price
+## please find our detailed answer in the pdf sheet attached
+
+## ==================================================================================================
+
+## 7) Generate a variable that is the difference between price and online price, call this variable
+## diff_price and drop the observations that are larger than the 95 percentile.
 
 amazon4$diff_price <- amazon4$price - amazon4$price_online
 summary((amazon4$diff_price))
@@ -130,3 +143,58 @@ summary((amazon5$diff_price))
 
 ggpairs(amazon5, columns = 4:6, title = 'after dropping 95th percentile')
 
+## please find our detailed answer in the pdf sheet attached
+
+## ==================================================================================================
+
+## 8) Check the pairwise correlations among the price variables in the dataset. How do they change
+## when you drop these extreme values?
+
+## ==================================================================================================
+
+## 9) Make summary statistics (mean, standard deviations, quartiles, percentiles) of the diff_price.
+
+## ==================================================================================================
+
+## 10) Create a random number generator from a uniform distribution, with parameters of your own
+## choice setting the seed equal to your group number. Call this variable id_rand.
+
+## ==================================================================================================
+
+## 11) Sort the variable and select the first 100 observations in your dataset. Make summary
+## statistics (mean, standard deviations, quartiles, percentiles) of the diff_price.
+## How do these statistics compare with those in 9?
+
+## ==================================================================================================
+
+## 12) Use the same procedure as in point 10 and select the last 200 observations in your dataset.
+## Make summary statistics (mean, standard deviations, quartiles, percentiles) of the diff_price.
+## How do these statistics compare with those in 9 and 11?
+
+## ==================================================================================================
+
+## 13) Use the same procedure as in point 10 and select the first 1000 observations in your dataset.
+## Make summary statistics (mean, standard deviations, quartiles, percentiles) of the variable
+## diff_price.How do these statistics compare with those in 9, 11, and 12? (Not mandatory!)
+
+## ==================================================================================================
+
+## 14) Use the same procedure as in point 10 and select the last 1000 observations in your dataset.
+## Make summary statistics (mean, standard deviations, quartiles, percentiles) of the diff_price.
+## How do these statistics compare with those in 9, 11, 12, and 13. (Not mandatory!)
+
+## ==================================================================================================
+
+## 15) From the statistics of the different random samples that you selected which are those that are
+## more similar to the statistics when considering the full dataset? Why do you think this is the
+## case?
+
+## ==================================================================================================
+
+## 16) Use the original dataset and repeat 9-14 (If you have done point 6, replace the missing
+## observations as in 6). How do your statistics change when you include the extreme values
+## (outliers) and when you exclude them? In light of the above evidence, what are your final
+## conclusions? Should we keep extreme values or should we drop them from the dataset? (Not
+## mandatory for part-time students!)
+
+## ==================================================================================================
