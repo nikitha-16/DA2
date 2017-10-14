@@ -68,3 +68,4 @@ amazon4$price_online <- amazon4[, ifelse(is.na(price_online),
 summary(amazon4$price_online)
 amazon4[, mean(price_online), by = retailer_id]
 
+
