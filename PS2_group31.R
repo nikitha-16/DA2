@@ -155,7 +155,6 @@ summary((amazon5$diff_price))
 
 ## 8) Check the pairwise correlations among the price variables in the dataset. How do they change
 ## when you drop these extreme values?
-ggpairs(amazon5, columns = 4:6, title = 'after dropping 95th percentile')
 
 ## please find our detailed answer in the pdf sheet attached
 
