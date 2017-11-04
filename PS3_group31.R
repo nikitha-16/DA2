@@ -61,10 +61,13 @@ amazon5 <- amazon[which(amazon$price <= quantile(amazon$price, prob = 0.95)),]
 # What can you say with respect to these conditional distribu-tions?
 
 amazon5$missing_online <- ifelse(is.na(amazon5$price_online), 1, 0)
-library(GGally)
-ggpairs(amazon5, columns = c('price', 'price_amazon', 'missing_online')) 
+amazon5$missing_online <- factor(amazon5$missing_online)
 
 library(ggplot2)
+ggplot(amazon5, aes(price)) + geom_histogram() + facet_wrap(~missing_online)
+ggplot(amazon5, aes(price_online)) + geom_histogram() + facet_wrap(~missing_online)
 
-#boxplots and histograms to follow. You can go ahead with question 8
+ggplot(amazon5, aes(missing_online, price)) + geom_boxplot()
+ggplot(amazon5, aes(missing_online, price_online)) + geom_boxplot()
 
+#End of coding, you can go ahead with question 8
