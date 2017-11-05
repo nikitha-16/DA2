@@ -71,11 +71,14 @@ amazon5$missing_online <- ifelse(is.na(amazon5$price_online), 1, 0)
 amazon5$missing_online <- factor(amazon5$missing_online)
 
 library(ggplot2)
-ggplot(amazon5, aes(price)) + geom_histogram() + facet_wrap(~missing_online)
-ggplot(amazon5, aes(price_online)) + geom_histogram() + facet_wrap(~missing_online)
-
-ggplot(amazon5, aes(missing_online, price)) + geom_boxplot()
-ggplot(amazon5, aes(missing_online, price_online)) + geom_boxplot()
+ggplot(amazon5, aes(price)) + geom_histogram() + facet_wrap(~missing_online) +
+  labs(title = "Histogram of price variable", subtitle = "through missing_online binary variable", x = "price variable")
+ggplot(amazon5, aes(price_amazon)) + geom_histogram() + facet_wrap(~missing_online) +
+  labs(title = "Histogram of price_amazon variable", subtitle = "through missing_online binary variable", x = "price_amazon variable")
+ggplot(amazon5, aes(missing_online, price)) + geom_boxplot() +
+  labs(title = "Box-plot of price variable", subtitle = "through missing_online binary variable", x = "price variable")
+ggplot(amazon5, aes(missing_online, price_amazon)) + geom_boxplot() +
+  labs(title = "Box-plot of price_amazon variable", subtitle = "through missing_online binary variable", x = "price_amazon variable")
 
 #8. Compare the means of the variables price and price_amazon variables across the two groups of the missing_online.
 
@@ -88,8 +91,11 @@ amazon5[, lapply(.SD, mean), by = missing_online, .SDcols = c("price", "price_am
 # For which retailers (or good categories) do you see a difference in means the prices and price_amazon?
 
 str(amazon5)
+# Computing the mean of price and price_amazon grouped by category
 amazon5[, lapply(.SD, mean), by = category, .SDcols = c("price", "price_amazon")]
+# Computing the mean of price and price_amazon grouped by retailer
 amazon5[, lapply(.SD, mean), by = retailer_s, .SDcols = c("price", "price_amazon")]
+# Computing the mean of price and price_amazon grouped by both category and retailer
 amazon5[, lapply(.SD, mean), by = list(category, retailer_s), .SDcols = c("price", "price_amazon")]
 
 #10. Due to the knowledge from PS2_part2 and the above evidence, can you say anything wether the observations
@@ -97,14 +103,16 @@ amazon5[, lapply(.SD, mean), by = list(category, retailer_s), .SDcols = c("price
 
 # Please find our answer in the pdf.
 
+# there are 1310 observations where online price is missing, loading those observations to amazon6
 amazon6 <- amazon[is.na(amazon$price_online),]
-amazon6 <- data.table(amazon6)
+amazon6 <- data.table(amazon6) # creating a data.table object
 amazon6[, lapply(.SD, mean), by = category, .SDcols = c("price", "price_amazon")]
 amazon6[, lapply(.SD, mean), by = retailer_s, .SDcols = c("price", "price_amazon")]
 amazon6[, lapply(.SD, mean), by = list(category, retailer_s), .SDcols = c("price", "price_amazon")]
 
+# dropping the observations above the 95 percentile and loading the rest amazon7
 amazon7 <- amazon6[which(amazon6$price <= quantile(amazon6$price, prob = 0.95)),]
-amazon7 <- data.table(amazon7)
+amazon7 <- data.table(amazon7) # creating a data.table object
 amazon7[, lapply(.SD, mean), by = category, .SDcols = c("price", "price_amazon")]
 amazon7[, lapply(.SD, mean), by = retailer_s, .SDcols = c("price", "price_amazon")]
 amazon7[, lapply(.SD, mean), by = list(category, retailer_s), .SDcols = c("price", "price_amazon")]
