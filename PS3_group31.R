@@ -1,4 +1,10 @@
+## Created by Group 31
+# Peter, Paziczki
+# Yetkin, Cagdas
+# Niranjan, Nikitha
+
 #Problem Set 3
+
 rm(list=ls())
 library(data.table)
 # 1.	Use the amazon_compare.csv file and load it into R.
@@ -126,6 +132,9 @@ CI_right <- mean+qnorm(0.975)*sd_dev/sqrt(sample_size)
 
 Q12 <- c(sample_size, mean, sd_dev, CI_left, CI_right)
 
+Q12.2 <- quantile(amazon5[a:b,]$price, probs = seq(0,1,0.25))
+Q12.3 <- quantile(amazon5[a:b,]$price, probs = seq(0,1,0.1))
+
 #13.	Repeat 11, sort id_rand and select and select the first 200 observations in your dataset make summary statistics for price.
 #Construct a 95 percent (CI) for the mean of price. How does this confidence interval compare to the one in 12?
 #Does this CI include the mean of price in 6? (Non mandatory!)
@@ -139,6 +148,9 @@ CI_left <- mean-qnorm(0.975)*sd_dev/sqrt(sample_size)
 CI_right <- mean+qnorm(0.975)*sd_dev/sqrt(sample_size)
 
 Q13 <- c(sample_size, mean, sd_dev, CI_left, CI_right)
+
+Q13.2 <- quantile(amazon5[a:b,]$price, probs = seq(0,1,0.25))
+Q13.3 <- quantile(amazon5[a:b,]$price, probs = seq(0,1,0.1))
 
 #14.	Repeat 11, sort id_rand and select and select the first and select the first 300 observations in your dataset make
 #summary statistics for price. Construct a 95 percent (CI) for the mean of price. How does this confidence interval compare
@@ -154,6 +166,8 @@ CI_right <- mean+qnorm(0.975)*sd_dev/sqrt(sample_size)
 
 Q14 <- c(sample_size, mean, sd_dev, CI_left, CI_right)
 
+Q14.2 <- quantile(amazon5[a:b,]$price, probs = seq(0,1,0.25))
+Q14.3 <- quantile(amazon5[a:b,]$price, probs = seq(0,1,0.1))
 
 #15.	Repeat 11, sort id_rand and select and select the first and select the first 1000 observations in your dataset make summary
 # statistics for price. Construct a 95 percent (CI) for the mean of price. How does this confidence interval compare to the one
@@ -171,6 +185,15 @@ Q15 <- c(sample_size, mean, sd_dev, CI_left, CI_right)
 
 CI_matrix <- matrix(c(Q12, Q13, Q14, Q15), nrow = 4, byrow = TRUE, dimnames = list(c("Q12", "Q13", "Q14", "Q15"), c("sample size", "sample mean", "sample st dev", "interval_left", "interval_right")))
 CI_matrix
+
+Q15.2 <- quantile(amazon5[a:b,]$price, probs = seq(0,1,0.25))
+Q15.3 <- quantile(amazon5[a:b,]$price, probs = seq(0,1,0.1))
+
+QUA_0.25_matrix <- matrix(c(Q12.2, Q13.2, Q14.2, Q15.2), nrow = 4, byrow = TRUE, dimnames = list(c("Q12", "Q13", "Q14", "Q15"), c("0%", "25%", "50%", "75%", "100%")))
+QUA_0.25_matrix
+
+QUA_0.1_matrix <- matrix(c(Q12.3, Q13.3, Q14.3, Q15.3), nrow = 4, byrow = TRUE, dimnames = list(c("Q12", "Q13", "Q14", "Q15"), c("0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%")))
+QUA_0.1_matrix
 
 #16.	Add 1 as the last digit in your seed, example if your group number is 106 your seed should be set as 1061 and repeat 12-15.
 # Have you answers changed? (Non mandatory for part-time students!)
