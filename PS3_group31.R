@@ -44,9 +44,9 @@ quantile(amazon3$price_online, probs = seq(from = 0, to = 1, by = 0.1))
 # H0 = means are the same
 # Ha = means are different, they are not equal
 
-t.test(amazon3$price == amazon3$price_online, alternative = c('two.sided'))
-
-# extremely small p value. We can reject the null hypothesis. They are not the same.
+#t.test(amazon3$price == amazon3$price_online, alternative = c('two.sided'))
+t.test(amazon3$price, amazon3$price_online)
+# p value = 0.4512 > 0.05. So we fail to reject the null hypothesis.
 
 # Question 5
 
@@ -60,7 +60,9 @@ t.test(amazon3$price_online, mu=y) # gives p value > 0.05: the means are not dif
 # for that are above the 95 percentile of the price variable.
 
 amazon5 <- amazon[which(amazon$price <= quantile(amazon$price, prob = 0.95)),]
-
+mean(amazon5$price)
+sd(amazon5$price)
+sd(amazon5$price)^2
 
 #7.	Generate a dummy variable taking value one if price_online is missing and zero otherwise. 
 # Call this variable missing_online. 
@@ -76,9 +78,11 @@ ggplot(amazon5, aes(price)) + geom_histogram() + facet_wrap(~missing_online) +
 ggplot(amazon5, aes(price_amazon)) + geom_histogram() + facet_wrap(~missing_online) +
   labs(title = "Histogram of price_amazon variable", subtitle = "through missing_online binary variable", x = "price_amazon variable")
 ggplot(amazon5, aes(missing_online, price)) + geom_boxplot() +
-  labs(title = "Box-plot of price variable", subtitle = "through missing_online binary variable", x = "price variable")
+  labs(title = "Box-plot of price variable", subtitle = "through missing_online binary variable", x = "Missing_Online")
 ggplot(amazon5, aes(missing_online, price_amazon)) + geom_boxplot() +
-  labs(title = "Box-plot of price_amazon variable", subtitle = "through missing_online binary variable", x = "price_amazon variable")
+  labs(title = "Box-plot of price_amazon variable", subtitle = "through missing_online binary variable", x = "Missing_Online")
+
+
 
 #8. Compare the means of the variables price and price_amazon variables across the two groups of the missing_online.
 
